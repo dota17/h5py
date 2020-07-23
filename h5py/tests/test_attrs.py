@@ -163,6 +163,8 @@ class TestMutableMapping(BaseAttrs):
         AttributeManager.__delitem__
         AttributeManager.__iter__
         AttributeManager.__len__
+        AttributeManager.__contains__
+        AttributeManager.__repr__
 
 class TestVlen(BaseAttrs):
     def test_vlen(self):

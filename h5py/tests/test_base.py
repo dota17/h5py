@@ -14,6 +14,7 @@
 """
 
 from h5py import File
+from h5py._hl.base import is_hdf5
 from .common import ut, TestCase, UNICODE_FILENAMES
 
 import numpy as np
@@ -40,6 +41,17 @@ class TestName(BaseTest):
         """ Anonymous objects have name None """
         grp = self.f.create_group(None)
         self.assertIs(grp.name, None)
+
+class TestFileType(BaseTest):
+    """
+        Test if a file is a HDF5 type
+    """
+
+    def test_is_hdf5(self):
+        filename = File("data.hdf5", "w").filename
+        fname = os.path.basename(filename)
+        fid = is_hdf5(fname)
+        self.assertTrue(fid)
 
 class TestRepr(BaseTest):
 

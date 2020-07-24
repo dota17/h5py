@@ -216,6 +216,10 @@ class TestEmpty(BaseAttrs):
         with self.assertRaises(IOError):
             self.f.attrs.modify('x', 1)
 
+    def test_keys(self):
+        keys = list(self.f.attrs.keys())
+        self.assertEqual([u"x"], keys)
+
     def test_values(self):
         # list() is for Py3 where these are iterators
         values = list(self.f.attrs.values())

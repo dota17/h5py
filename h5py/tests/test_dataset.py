@@ -27,6 +27,7 @@ from h5py import File, Group, Dataset
 from h5py._hl.base import is_empty_dataspace
 from h5py import h5f, h5t
 import h5py
+import h5py._hl.selections as sel
 
 
 class BaseDataset(TestCase):
@@ -164,6 +165,65 @@ class TestCreateData(BaseDataset):
     def test_empty_create_via_Empty_class(self):
         self.f.create_dataset('foo', data=h5py.Empty(dtype='f'))
         self.assertTrue(is_empty_dataspace(self.f['foo'].id))
+
+class TestReadDirectly(BaseDataset):
+
+    """
+        Feature: Read data directly from Dataset into a Numpy array
+    """
+
+    def test_read_direct(self):
+        dset = self.f.create_dataset("dset", (100,), dtype='int64')
+        #source_dset = self.f.create_dataset("source_dset", (100,), dtype='int64')
+        #dest_dset = self.f.create_dataset("dest_dset", (100,), dtype='int64')
+        empty_dset = self.f.create_dataset("edset", dtype='int64')
+
+        #source_sel = sel.select((100,), ..., source_dset)
+        #dest_sel = sel.select((100,), ..., dest_dset)
+        arr = np.zeros((100,), dtype='int32')
+
+        if arr.flags.c_contiguous:
+            # read empty dataset
+            try:
+                empty_dset.read_direct(arr, np.s_[0:10], np.s_[50:60])
+            except TypeError:
+                pass
+
+            dset.read_direct(arr, np.s_[0:10], np.s_[50:60])
+            self.assertEqual(dset.shape, (100,))
+
+            dset.read_direct(arr)
+            self.assertEqual(dset.shape, (100,))
+
+class TestWriteDirectly(BaseDataset):
+
+    """
+        Feature: Write Numpy array directly into Dataset
+    """
+
+    def test_write_direct(self):
+        dset = self.f.create_dataset('dset', (100,), dtype='int32')
+        #source_dset = self.f.create_dataset("source_dset", (100,), dtype='int64')
+        #dest_dset = self.f.create_dataset("dest_dset", (100,), dtype='int64')
+        empty_dset = self.f.create_dataset("edset", dtype='int64')
+
+        arr = np.ones((100,), dtype='int64')
+        #source_sel = sel.select((100,), ..., source_dset)
+        #dest_sel = sel.select((100,), ..., dest_dset)
+
+        if arr.flags.c_contiguous:
+            # write into empty dataset
+            # FIXME: write data into empty datase should be allowed
+            try:
+                empty_dset.write_direct(arr, np.s_[0:10], np.s_[50:60])
+            except TypeError:
+                pass
+
+            dset.write_direct(arr, np.s_[0:10], np.s_[50:60])
+            self.assertEqual(dset.shape, (100,))
+
+            dset.write_direct(arr)
+            self.assertEqual(dset.shape, (100,))
 
 
 class TestCreateRequire(BaseDataset):

@@ -30,16 +30,6 @@ class BaseTest(TestCase):
         if self.f:
             self.f.close()
 
-class TestEmpty(BaseTest):
-
-    """
-        Test Empty class
-    """
-
-    def test_empty(self):
-        data = Empty(dtype='f')
-        self.assertNotEqual(Empty(dtype='i'), data)
-        self.assertEqual(r"Empty(dtype='f')", repr(data))
 
 class TestName(BaseTest):
 
@@ -150,6 +140,11 @@ class TestRepr(BaseTest):
         self.f['type'] = np.dtype('f')
         typ = self.f['type']
         self._check_type(typ)
+
+    def test_empty(self):
+        data = Empty(dtype='f')
+        self.assertNotEqual(Empty(dtype='i'), data)
+        self._check_type(data)
 
     @ut.skipIf(not UNICODE_FILENAMES, "Filesystem unicode support required")
     def test_file(self):

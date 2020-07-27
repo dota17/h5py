@@ -22,9 +22,10 @@ from sys import platform
 from .common import ut, TestCase, UNICODE_FILENAMES, closed_tempfile
 from h5py import File
 import h5py
+from .. import h5
 
 import pathlib
-
+mpi = h5.get_config().mpi
 
 class TestFileOpen(TestCase):
 
@@ -283,6 +284,14 @@ class TestDrivers(TestCase):
         fid.close()
 
     # TODO: family driver tests
+
+    def test_family(self):
+        """ Family stores metadata in a separate file """
+        fname = self.mktemp()
+        fid = File(fname, 'w', driver='family')
+        self.assertEqual(fid.driver, 'family')
+        self.assertTrue(fid)
+        fid.close()
 
 
 @ut.skipUnless(h5py.version.hdf5_version_tuple < (1, 10, 2),

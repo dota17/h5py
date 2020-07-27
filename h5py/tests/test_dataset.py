@@ -174,12 +174,12 @@ class TestReadDirectly(BaseDataset):
 
     def test_read_direct(self):
         dset = self.f.create_dataset("dset", (100,), dtype='int64')
-        #source_dset = self.f.create_dataset("source_dset", (100,), dtype='int64')
-        #dest_dset = self.f.create_dataset("dest_dset", (100,), dtype='int64')
+        source_dset = self.f.create_dataset("source_dset", (100,), dtype='int64')
+        dest_dset = self.f.create_dataset("dest_dset", (100,), dtype='int64')
         empty_dset = self.f.create_dataset("edset", dtype='int64')
 
-        #source_sel = sel.select((100,), ..., source_dset)
-        #dest_sel = sel.select((100,), ..., dest_dset)
+        source_sel = sel.select((100,), ..., source_dset)
+        dest_sel = sel.select((100,), ..., dest_dset)
         arr = np.zeros((100,), dtype='int32')
 
         if arr.flags.c_contiguous:
@@ -192,7 +192,7 @@ class TestReadDirectly(BaseDataset):
             dset.read_direct(arr, np.s_[0:10], np.s_[50:60])
             self.assertEqual(dset.shape, (100,))
 
-            dset.read_direct(arr)
+            dset.read_direct(arr, source_sel, dest_sel)
             self.assertEqual(dset.shape, (100,))
 
 class TestWriteDirectly(BaseDataset):
@@ -203,13 +203,9 @@ class TestWriteDirectly(BaseDataset):
 
     def test_write_direct(self):
         dset = self.f.create_dataset('dset', (100,), dtype='int32')
-        #source_dset = self.f.create_dataset("source_dset", (100,), dtype='int64')
-        #dest_dset = self.f.create_dataset("dest_dset", (100,), dtype='int64')
         empty_dset = self.f.create_dataset("edset", dtype='int64')
 
         arr = np.ones((100,), dtype='int64')
-        #source_sel = sel.select((100,), ..., source_dset)
-        #dest_sel = sel.select((100,), ..., dest_dset)
 
         if arr.flags.c_contiguous:
             # write into empty dataset

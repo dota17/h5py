@@ -279,6 +279,15 @@ class TestCreateRequire(BaseDataset):
         with self.assertRaises(TypeError):
             self.f.require_dataset('foo', (10, 3), 'S10')
 
+    def test_dtype_exact(self):
+        """ require_dataset with exactly dtype match """
+
+        dset = self.f.create_dataset('foo', (10, 3), 'f')
+        dset2 = self.f.require_dataset('foo', (10, 3), 'f', exact=True)
+        self.assertEqual(dset, dset2)
+        with self.assertRaises(TypeError):
+            self.f.require_dataset('foo', (10, 3), 'i', exact=True)
+
     def test_dtype_close(self):
         """ require_dataset with convertible type succeeds (non-strict mode)
         """
@@ -790,6 +799,14 @@ class TestCreateLike(BaseDataset):
         self.assertEqual(0, h5py.h5g.get_objinfo(orig._id).mtime)
         similar = self.f.create_dataset_like('lenovo', orig)
         self.assertEqual(0, h5py.h5g.get_objinfo(similar._id).mtime)
+
+    def test_special_case(self):
+        """ Test when other.maxshape != other.shape """
+
+        other = self.f.create_dataset('other', (10,), maxshape=20)
+        similar = self.f.create_dataset_like('sim', other)
+        self.assertEqual(similar.shape, (10,))
+        self.assertEqual(similar.maxshape, (20,))
 
 class TestChunkIterator(BaseDataset):
     def test_no_chunks(self):

@@ -166,6 +166,12 @@ class TestCreateData(BaseDataset):
         self.f.create_dataset('foo', data=h5py.Empty(dtype='f'))
         self.assertTrue(is_empty_dataspace(self.f['foo'].id))
 
+    def test_create_incompatible_data(self):
+        data = self.f.create_dataset('dset', (3,))
+        with self.assertRaises(ValueError):
+            self.f.create_dataset('bar', shape=4, data=data)
+
+
 class TestReadDirectly(BaseDataset):
 
     """
@@ -302,6 +308,11 @@ class TestCreateChunked(BaseDataset):
         """ Illegal chunk size raises ValueError """
         with self.assertRaises(ValueError):
             self.f.create_dataset('foo', shape=(100,), chunks=(200,))
+
+    def test_chunks_false(self):
+        """ Chunked format required for given storage options """
+        with self.assertRaises(ValueError):
+            self.f.create_dataset('foo', shape=(10,), maxshape=100, chunks=False)
 
     def test_chunks_scalar(self):
         """ Attempting to create chunked scalar dataset raises TypeError """
@@ -551,6 +562,17 @@ class TestCreateScaleOffset(BaseDataset):
 
         with self.assertRaises(ValueError):
             dset = self.f.create_dataset('foo', (20, 30), dtype=float, scaleoffset=True)
+    def test_non_integer(self):
+        """ Check when scaleoffset is negetive"""
+
+        with self.assertRaises(ValueError):
+            dset = self.f.create_dataset('foo', (20, 30), dtype=float, scaleoffset=-0.1)
+
+    def test_unsupport_dtype(self):
+        """ Check when dtype is unsupported type"""
+
+        with self.assertRaises(TypeError):
+            dset = self.f.create_dataset('foo', (20, 30), dtype=bool, scaleoffset=True)
 
     def test_float(self):
         """ Scaleoffset filter works for floating point data """
@@ -817,6 +839,9 @@ class TestResize(BaseDataset):
 
         dset = self.f.create_dataset('bar', 20, maxshape=20)
         self.assertEqual(dset.maxshape, (20,))
+
+        dset = self.f.create_dataset('fun', (1,), maxshape=True)
+        self.assertEqual(dset.maxshape, (1,))
 
     def test_resize(self):
         """ Datasets may be resized up to maxshape """
@@ -1205,6 +1230,11 @@ class TestTrackTimes(BaseDataset):
         ds = self.f.create_dataset('foo', (4,), track_times=False)
         ds_mtime = h5py.h5g.get_objinfo(ds._id).mtime
         self.assertEqual(0, ds_mtime)
+
+    def test_invalid_track_times(self):
+        """ check that when give track_times an invalid value """
+        with self.assertRaises(TypeError):
+            self.f.create_dataset('foo', (4,), track_times='null')
 
 
 class TestZeroShape(BaseDataset):

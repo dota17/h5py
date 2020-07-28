@@ -63,23 +63,23 @@ class TestAccess(BaseAttrs):
         self.assertEqual(self.f.attrs['a'], 4.0)
 
     def test_create_2(self):
-        """ Attribute creation by creation method """
+        """ Attribute creation by create() method """
         self.f.attrs.create('a', 4.0)
         self.assertEqual(list(self.f.attrs.keys()), ['a'])
         self.assertEqual(self.f.attrs['a'], 4.0)
 
     def test_modify(self):
-        """ Attributes are modified  by direct assignment"""
-        self.f.attrs['a'] = 4.0
-        self.assertEqual(list(self.f.attrs.keys()), ['a'])
-        self.assertEqual(self.f.attrs['a'], 4.0)
+        """ Attributes are modified by direct assignment"""
         self.f.attrs['a'] = 3
         self.assertEqual(list(self.f.attrs.keys()), ['a'])
         self.assertEqual(self.f.attrs['a'], 3)
+        self.f.attrs['a'] = 4
+        self.assertEqual(list(self.f.attrs.keys()), ['a'])
+        self.assertEqual(self.f.attrs['a'], 4)
 
     def test_modify_2(self):
         """ Attributes are modified by modify() method """
-        self.f.attrs['a'] = 3
+        self.f.attrs.modify('a',3)
         self.assertEqual(list(self.f.attrs.keys()), ['a'])
         self.assertEqual(self.f.attrs['a'], 3)
 

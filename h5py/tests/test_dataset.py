@@ -190,10 +190,8 @@ class TestReadDirectly(BaseDataset):
 
         if arr.flags.c_contiguous:
             # read empty dataset
-            try:
+            with self.assertRaises(TypeError):
                 empty_dset.read_direct(arr, np.s_[0:10], np.s_[50:60])
-            except TypeError:
-                pass
 
             dset.read_direct(arr, np.s_[0:10], np.s_[50:60])
             self.assertEqual(dset.shape, (100,))
@@ -216,10 +214,8 @@ class TestWriteDirectly(BaseDataset):
         if arr.flags.c_contiguous:
             # write into empty dataset
             # FIXME: write data into empty datase should be allowed
-            try:
+            with self.assertRaises(TypeError):
                 empty_dset.write_direct(arr, np.s_[0:10], np.s_[50:60])
-            except TypeError:
-                pass
 
             dset.write_direct(arr, np.s_[0:10], np.s_[50:60])
             self.assertEqual(dset.shape, (100,))

@@ -93,6 +93,7 @@ class TestScalarSliceRules(BaseSelection):
             shape, selection = sel2.read_selections_scalar(dsid, (1,))
 
 class TestSelection(BaseSelection):
+
     """ High-level routes to generate a selection
     """
 

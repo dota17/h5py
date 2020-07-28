@@ -43,11 +43,11 @@ class TestRepr(TestCase):
     """
 
     def test_repr(self):
-        fid = File(self.mktemp(), 'w')
-        fid.attrs.create('att', 1.0)
-        self.assertIsInstance(repr(fid), str)
-        fid.close()
-        self.assertIsInstance(repr(fid), str)
+        grp = self.f.create_group('grp')
+        grp.attrs.create('att', 1)
+        self.assertIsInstance(repr(grp.attrs), str)
+        grp.id.close()
+        self.assertIsInstance(repr(grp.attrs), str)
 
 
 class TestAccess(BaseAttrs):

@@ -884,6 +884,9 @@ class TestCopy(TestCase):
         self.f1.copy('foo', 'baz')
         self.assertArrayEqual(self.f1['baz'], np.array([1,2,3]))
 
+        self.f2.copy(foo, self.f2)
+        self.assertArrayEqual(self.f2['bar'], np.array([1,2,3]))
+
         self.f1.copy('foo', self.f2)
         self.assertArrayEqual(self.f2['foo'], np.array([1,2,3]))
 
